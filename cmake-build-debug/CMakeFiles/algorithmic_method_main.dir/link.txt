@@ -1,1 +1,0 @@
-/usr/bin/c++ -g CMakeFiles/algorithmic_method_main.dir/sorting-algorithms/QuickSort.cc.o -o algorithmic_method_main 
