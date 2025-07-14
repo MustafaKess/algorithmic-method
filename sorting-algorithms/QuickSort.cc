@@ -1,77 +1,10 @@
 /**
- *   Programeksempel nr 24 - Quicksort.
+ *  Quick Sort algorithm implementation in C++.
  *
- *   Algoritme/virkemåte:
- *        Prinsippet: Splitt og hersk, partisjonere i to, sortere hver del.
- *        Dette løses/gjøres ved å:
- *         - velge arr[hoyre] som et tilfeldig element/verdi å sortere ut fra.
- *           Det valgte elementet kalles "partisjonselementet".
- *         - lete fra venstre etter en større eller lik verdi, og fra høyre
- *           etter en mindre eller lik verdi, og så bytte om på disse to.
- *         - gjenta det forrige punktet inntil letingen har passert hverandre.
- *         - til slutt bytte arr[hoyre] (partisjonselementet) med den
- *           HELT TIL HØYRE I VENSTRE DELARRAY (nr.'i').
- *        Alt dette medfører at:
- *         - Partisjonselementet i arr[i] er på sin endelige plass for godt
- *         - ALLE verdier i arr[venstre] til arr[i-1] er MINDRE ELLER LIK
- *         - ALLE verdier i arr[i+1] til arr[hoyre] er STØRRE ELLER LIK
- *
- *   Orden ( O(...)):
- *        Quicksort bruker i gjennomsnitt omtrent  2N ln N  sammenligninger.
- *        (som er omtrent  1.39N lg N)     "Worst case":  (N*N)/2
- *
- *   NB:  - Koden i funksjonen 'partisjoner' kan/burde også bare flyttes inn
- *          i funksjonen 'quickSort' - så går den ENDA raskere.
- *        - Skal elementet HELT til høyre eller venstre velges som
- *          partisjonselement?  Dette er en smakssak, og gjøres litt ulikt
- *          i de forskjellige kodesnutter, visualiseringer og animasjoner.
- *          Det viktigste er at man gjør ET VALG, og er konsekvent mot dette !
- *          ==================================================================
- *          I koden nedenfor er det brukt det HELT TIL HØYRE i delarrayen, og
- *          DETTE ER DET OGSÅ FORUTSATT AT MAN GJØR IFM. OPPGAVER/PÅ EKSAMEN !
- *          ==================================================================
- *        - Quicksort bytter også om på elementer som er likt med
- *          partisjonselementet. Hadde det KUN vært LIKE elementer i hele
- *          arrayen så ville vi ellers ha fått et "worst case". Men gjøres
- *          det slik, så vil gi hele tiden få en EKSAKT todeling/halvering av
- *          av arrayen - som jo er en god, rask og effektiv måte.
- *        - Bruker også SENTINEL KEY - i tilfelle partisjonselementet
- *          er det aller minste
- *        - Stabil?  NEI - da bl.a. bytter om like elementer
- *
- *        - Siden Quicksort er en av de aller raskeste sorteringsmetoder som
- *          er laget/utviklet, så er det også sett på mye hvordan gjøre den
- *          ENDA raskere. Tre forbedringer i så møte KAN være:
- *             1) Fjerne rekursjon - heller bruke Stack:
- *                Rekursjon er ofte elegant og den enkleste måten å løse en
- *                del problemer på. Men den er også litt ekstra ressurs-
- *                krevende, ved at data (adresser i hukommelsen og lokale
- *                variable må pushes på "programstacken"). Fjerner man derfor
- *                rekursjon og heller pusher på en egen stack 'venstre'- og
- *                'hoyre'-intervaller som koden har igjen å jobbe med, så vil
- *                hastigheten kunne gå litt/noe opp.
- *             2) Spesialhåndtere mindre/kortere delarrayer:
- *                Når delarrayen som skal sorteres vha. Quicksort blir rimelig
- *                kort (typisk 5-25 elementer), så kan man la være å sortere
- *                disse vha. rekursive Quicksort, men la de forbli usortert.
- *                HELT TIL SLUTT går man gjennom HELE arrayen og sorterer den
- *                vha. f.eks. Insertion sort. Da vil den jo bestå av masse
- *                delarrayer, der ALLE elementer i en delarray er større enn
- *                de i den forrige, og mindre enn ALLE i den neste. Dermed vil
- *                ikke Insertion sort flytte elementene så langt bakover.
- *             3) Median-of-three:
- *                I stedet for å bare ta høyre/venstre element som partisjons-
- *                element, som jo blir en meget tilfeldig verdi, så prøver man
- *                å finne en verdi som kanskje er LITT mer representativ for
- *                gjennomsnittet av verdiene i delarrayen. Dette gjør man ved
- *                å se på venstre, midtre og høyre element. Bytte om på disse,
- *                slik at de blir i stigende rekkefølge, bytte arr[midtre] opp
- *                til arr[hoyre-1], og så sortere delarrayen arr[venstre+1] og
- *                opp til arr[hoyre-2]. Slipper da også sentinel key!
- *          Men, selv med alle alt dette blir Quicksort bare 25-30% raskere.
- *
- *   @file     EKS_24_QuickSort.CPP
- *   @author   Frode Haug, NTNU
+ *   @see https://frh.folk.ntnu.no/algmet/opplegg.html (Norwegian Site)
+ *   for the original implementation in Frode Kode™
+ *   @file     QuickSort.cc
+ *   @author   Frode Haug, Mustafa Kesen
  */
 
 
@@ -81,132 +14,98 @@
 using namespace std;
 
 
-const int N = 20;            ///<  Antall elementer i array som skal sorteres.
-
-
-void bytt(char & tegn1, char & tegn2);
-void display(const string & tekst, const char arr[],
-             const int venstre, const int hoyre);
-int  partisjoner(char arr[], const int venstre, const int hoyre);
-void quickSort(char arr[], const int venstre, const int hoyre);
-
+const int n = 20;            //Total number of elements in the array to be sorted.
+void change(char & first, char & second);
+void display(const string & text, const char arr[],  int left,  int right);
+int  partitions(char arr[],  int left, int right);
+void quickSort(char arr[],  int left,  int right);
 
 /**
- *  Hovedprogrammet:
+ *  Main function that initializes an array with random letters.
  */
+
 int main() {
-    char array[N+1];                 //  Array som skal sorteres.
-                                     //  Bruker indeksene 1-N
-                                     //    da det ligger SENTINEL KEY
-                                     //    (STOPPVERDI) i element nr.0 !!!
-
-    srand(0);                      //  Brukes ifm. tilfeldighet/randomisering.
-
-    array[0] = ' ';                //  Legger inn SENTINEL KEY !!!
-
-    for (int i = 1; i <= N; i++) //  Array med tilfeldige bokstaver A-Z:
+    char array[n+1];                //Array to be sorted
+    srand(0);                  //Initialize random number generator.
+    array[0] = ' ';                // Element for 1-based indexing.
+    for (int i = 1; i <= n; i++) //  Randomize letters
         array[i] = static_cast <char> ('A' + (rand() % 26));
-
-    display("\n\nArrayen FØR sortering:\n", array, 1, N);
-
-
-    quickSort(array, 1, N);      //  QUICKSORT SORTERER !!!
-
-                                   //  Skriver array ETTER sortering:
-    display("\n\nArrayen ETTER QUICKSORT sortering:\n", array, 1, N);
-
+    display("\n\nArray Before quicksort:\n", array, 1, n);
+    quickSort(array, 1, n);
+    display("\n\nArray after quicksort algorithm:\n", array, 1, n);
     cout << "\n\n";
     return 0;
 }
 
 
 /**
- *  Bytter om to referanseoverførte variables innhold.
- *
- *  @param   tegn1  -  Verdien som skal byttes med 'tegn2' (referanseoverført)
- *  @param   tegn2  -  Verdien som skal byttes med 'tegn1' (referanseoverført)
+ *  Changes the values of two characters by reference.
+ *  @param   first  -  Value to be swapped with 'second' (reference passed)
+ *  @param   second  - Value to be swapped with 'first' (reference passed)
  */
-void bytt(char & tegn1, char & tegn2) {
-    char temp = tegn1;           //  Midlertidig (temporary) unnalagring.
-    tegn1 = tegn2;
-    tegn2 = temp;
+void change(char & first, char & second) {
+    char temp = first;     //temporary variable
+    first = second;
+    second = temp;
 }
 
 
 /**
- *  Skriver ut (deler av) arrayen 'arr' sitt innhold.
- *
- *  @param   tekst    -  Ledetekst som skrives aller først
- *  @param   arr      -  Arrayen som får (deler av) innholdet skrevet ut
- *  @param   venstre  -  Nedre/venstre indeks for utskrift
- *  @param   hoyre    -  Øvre/høyre    indeks for utskrift
+ * Displays a part of the array with a message.
+ * @param text  - Message to be displayed before the array.
+ * @param arr  - Array to be displayed.
+ * @param left  - Left index of the array to be displayed.
+ * @param right  - Right index of the array to be displayed.
  */
-void display(const string & tekst, const char arr[],
-             const int venstre, const int hoyre) {
-    cout << tekst << "\t";
-    for (int i = venstre;  i <= hoyre;  i++)
+void display(const string & text, const char arr[],
+             const int left, const int right) {
+    cout << text << "\t";
+    for (int i = left;  i <= right;  i++)
         cout << arr[i];
-    getchar();                            //  Venter på ETT ENTER.
+    getchar();                            // Wait for user input
 }
 
-
 /**
- *  Flytter elementer i (deler av) array ut fra HØYRE partisjonselement,
- *  slik at ALT til venstre er mindre/lik, og ALT til høyre er større/lik.
+ * Partitions the array into two halves based on a pivot element.
  *
- *  @param    arr      -  Arrayen som skal partisjoneres
- *  @param    venstre  -  Nedre/venstre indeks for partisjonering
- *  @param    hoyre    -  Øvre/høyre    indeks for partisjonering
- *  @return   Indeksen der partisjonselementet havnet/ble plassert
- *  @see      display(...)
+ * @param arr  -  Array to be partitioned.
+ * @param left -  Left index of the array to be partitioned.
+ * @param right -  Right index of the array to be partitioned.
+ * @return  -  Index of the pivot element after partitioning.
  */
-int partisjoner(char arr[], const int venstre, const int hoyre) {
-    if (hoyre > venstre) {              //  Minst TO elementer:
-        int i, j;                       //  Indekser som går mot hverandre.
-        char partisjonsElement;         //  Partisjonselementet.
+int partitions(char arr[], const int left, const int right) {
+    if (right > left) {
+        int i, j;
+        char partitionElement = arr[right]; // Initializing partition element
+        i = left-1;                //Minus 1 for 1-based indexing.
+        j = right;                 //Rightmost index is the partition element.
 
-        partisjonsElement = arr[hoyre]; //  Initierer til HØYRE element.
-        i = venstre-1;                  //  Initierer indeksene til ETT
-        j = hoyre;                      //    hakk utenfor intervallet.
-                             //  NB:  'i' og 'j' økes/minskes FØR bruk.
-                             //       Derfor er de initiert utenfor grensene.
-                             //       De stopper dermed på de aktuelle
-                             //       indekser UTEN å "hoppe" en for langt.
-//                            display("\nFør:", arr, venstre, hoyre);
-        while (true) {                  //  Looper til breaker ut:
-                                        //  Leter etter STØRRE ELLER LIK:
-            while (arr[++i] < partisjonsElement)   ;   //  NB:  Tom innmat !!!
-                                        //  Leter etter MINDRE ELLER LIK:
-            while (arr[--j] > partisjonsElement)   ;   //  NB:  Tom innmat !!!
-
-//                             cout << "i: " << i << "  j: " << j << "   - "
-//                                  << ((i < j) ? "Bytte" : "BREAK") << '\n';
-            if (i >= j)  break;         //  Indekser nådd/passert hverandre.
-            bytt(arr[i], arr[j]);       //  Bytter der stanset med 'i' og 'j'.
+        while (true) {
+            while (arr[++i] < partitionElement) {} //Bigger or equal:
+            while (arr[--j] > partitionElement) {} //Less or equal:
+            if (i >= j)  break;         //  Condition for breaking the loop.
+            change(arr[i], arr[j]);
         }
 
-        bytt(arr[i], arr[hoyre]);     //  Bytter/setter (for godt) partisjons-
-                                      //    elementet med det HELT TIL HØYRE I
-                                      //    VENSTRE HALVDEL (dvs. der 'i' er).
-//                             display("Etter:", arr, venstre, hoyre);
-        return i;                     //  Returnerer der partisjonselementet
-    }                                 //    havnet/ble plassert.
-    return 0;                         //  Mindre enn to elementer:
-}                                     //    returnerer "dummy" verdi.
+        change(arr[i], arr[right]);
+        return i;     // Return the index of the partition element.
+    }
+    return 0;        // If no partitioning is needed, return 0.
+}
 
 
 /**
- *  Sorterer REKURSIVT en char-array STIGENDE med QUICKSORT.
+ * Quick Sort algorithm that sorts an array of characters.
  *
- *  @param   arr      -  Arrayen som skal sorteres
- *  @param   venstre  -  Nedre/venstre indeks for sorteringsintervall
- *  @param   hoyre    -  Øvre/høyre    indeks for sorteringsintervall
- *  @see     partisjoner(...)
+ * @param arr -  Array to be sorted.
+ * @param left -  Left index of the array to be sorted.
+ * @param right -  Right index of the array to be sorted.
  */
-void quickSort(char arr[], const int venstre, const int hoyre)  {
-    if (hoyre > venstre) {                  //  MINST TO elementer:
-        int indeks = partisjoner(arr, venstre, hoyre);    //  Partisjonerer!!!
-        quickSort(arr, venstre, indeks-1);  //  Gjør det samme for venstre og
-        quickSort(arr, indeks+1, hoyre);    //    høyre halvdel ift. 'indeks'.
+void quickSort(char arr[], const int left, const int right)  {
+    if (right > left) {
+        int index = partitions(arr, left, right);
+        quickSort(arr, left, index-1);
+        quickSort(arr, index+1, right);
+
     }
 }
