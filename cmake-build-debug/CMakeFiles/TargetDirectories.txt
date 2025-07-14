@@ -1,0 +1,3 @@
+/mnt/c/Users/musta/Downloads/algorithmic-method-main/cmake-build-debug/CMakeFiles/algorithmic_method_main.dir
+/mnt/c/Users/musta/Downloads/algorithmic-method-main/cmake-build-debug/CMakeFiles/edit_cache.dir
+/mnt/c/Users/musta/Downloads/algorithmic-method-main/cmake-build-debug/CMakeFiles/rebuild_cache.dir
