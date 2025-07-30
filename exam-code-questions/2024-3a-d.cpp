@@ -1,4 +1,4 @@
-//Code snippit with comments taken straight from the exam paper
+//Code snippet with comments taken straight from the exam paper
 //Code is in Norwegian to reflect the exam paper
 //Globale variabler, parametere, struct medlemmer eller hjelpe-strukturer skal IKKE brukes
 //
