@@ -1,4 +1,4 @@
-//Text, code and comments are all in norwegian due to being taken from the exam paper
+//Text, code and comments might be in norwegian due to being taken from the exam paper
 /*
 Oppgave 4
 Vi har en lang tekst som inneholder  N  tegn (alle slags tegn på tastaturet, ikke bare bokstaver og sifre).

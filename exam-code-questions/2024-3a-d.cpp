@@ -1,5 +1,5 @@
 //Code snippet with comments taken straight from the exam paper
-//Code is in Norwegian to reflect the exam paper
+//Code might be in Norwegian to reflect the exam paper
 //Globale variabler, parametere, struct medlemmer eller hjelpe-strukturer skal IKKE brukes
 //
 //Treet som er oppgitt er satt opp i inorde rekke,
@@ -20,6 +20,7 @@ Node (int id, Node* l, Node* r, bool hHB)
 { ID = id;  left = l;  right = r;  harHoyreBarn = hHB;  }
 
   };
+Node* gRoot = nullptr; // Global root pointer
 
 
 /**
@@ -29,7 +30,7 @@ Node (int id, Node* l, Node* r, bool hHB)
 * Merk at her så betyr ikke "minste noden" det samme som neste i inorder rekkefølge
 */
 
-
+/*
 Node* forste(Node* node){
  if(node == nullptr) {return nullptr} //Dersom tom, altså ingen node. Return nullptr
 
@@ -42,11 +43,12 @@ Node* forste(Node* node){
 }
 
 
+
 /**
 * Oppgave 3b - Lag den ikke rekursive funksjonen "bool finn(int id)"
 * Returnerer true/false til om id finnes i treet tilpeket av "gRoot"
 */
-
+/*
 bool finn(int id) {
     Node* current = gRoot;
     while (current !=nullptr){
@@ -68,7 +70,7 @@ bool finn(int id) {
 * Starter i node og skriver ut alle id'ene i hele resten av treet
 * Kan bruke funksjoner fra oppgave 3a og 3b
 */
-
+/*
 void travarser(Node* node) {
     if (node == nullptr) return;
 
@@ -93,7 +95,7 @@ kan opprette nye noder vha.  new  og passende parametre. Hint:  En ny node legge
 inn nederst, pluss noen andre prinsipper som alltid vil gjelde (men de må du finne ut av selv).
 */
 
-
+/*
 void legginn(int id) {
     Node* newNode = new Node(id, nullptr, nullptr, false); // Create a new node, fill inn parameters
 
@@ -122,5 +124,8 @@ void legginn(int id) {
         parent->harHoyreBarn = true; // Mark that this parent has a right child
     }
 }
+
+
+
 
 

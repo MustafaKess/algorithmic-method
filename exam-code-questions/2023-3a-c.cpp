@@ -1,5 +1,5 @@
 //Code snippet with comments taken straight from the exam paper
-//Code is in Norwegian to reflect the exam paper
+//Code might be in Norwegian to reflect the exam paper
 
 // Vi har et binært tre (ikke nødvendigvis søketre) bestående av noder:
 
